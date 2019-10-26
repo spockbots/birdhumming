@@ -1,0 +1,58 @@
+#!/usr/bin/env micropython
+
+import spockbots.robot as robot
+from spockbots.run_test1 import run_test1
+from spockbots.run_test2 import run_test2
+from ev3dev2.sensor.lego import GyroSensor
+from ev3dev2.motor import MoveTank, MoveSteering, SpeedPercent, LargeMotor, MediumMotor
+from ev3dev2.motor import OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D
+from ev3dev2.sound import Sound
+from time import sleep
+from ev3dev2.sound import Sound
+
+# Wheel https://www.bricklink.com/v2/catalog/catalogitem.page?P=86652c01#T=C
+diameter=62.4 # mm
+width=20      # mm
+
+
+def distance_to_rotation(distance):
+    """
+    calculation to convert the distence from
+    cm into rotations.
+    """
+    circumference=diameter*3.14
+    rotation=distance/circumference
+    return rotation
+
+
+gy = GyroSensor() 
+
+while True:
+    txt = "exit"
+    if robot.button('backspace'):
+        break
+    elif robot.button('up'):
+        #run_swing()
+            #robot.forward(20, 100)
+	    distance = 600
+            gy.mode='GYRO-ANG'
+            units = gy.units
+            angle = gy.value()
+	    steer_pair = MoveSteering(OUTPUT_A, OUTPUT_B, motor_class=LargeMotor)
+	    rotations=distance_to_rotation(distance)
+	    steer_pair.on_for_rotations(steering=0.55*angle, speed=-30, rotations=rotations)
+	
+
+
+    elif robot.button('down'):
+        run_tree()
+    elif robot.button('left'):
+        run_test1()
+    elif robot.button('right'):
+        run_test2()
+
+
+print(txt)
+robot.flash()
+
+
